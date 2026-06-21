@@ -1,0 +1,109 @@
+{
+  "$schema": "https://tabularis.dev/schemas/plugin-manifest.json",
+  "id": "informix",
+  "name": "IBM Informix",
+  "version": "0.1.0",
+  "description": "IBM Informix (11.70+) driver over ODBC. Requires the Informix Client SDK (CSDK) installed on the host.",
+  "default_port": 9088,
+  "default_username": "informix",
+  "executable": "tabularis-informix-plugin",
+  "color": "#0f62fe",
+  "icon": "database",
+  "capabilities": {
+    "schemas": false,
+    "views": true,
+    "routines": true,
+    "file_based": false,
+    "folder_based": false,
+    "connection_string": false,
+    "identifier_quote": "\"",
+    "alter_primary_key": false,
+    "alter_column": true,
+    "create_foreign_keys": true,
+    "manage_tables": true,
+    "readonly": false,
+    "supports_ssl": false,
+    "auto_increment_keyword": "",
+    "serial_type": "SERIAL",
+    "inline_pk": false
+  },
+  "settings": [
+    {
+      "key": "driver_name",
+      "label": "ODBC Driver Name",
+      "type": "string",
+      "default": "IBM INFORMIX ODBC DRIVER",
+      "description": "Name of the Informix ODBC driver registered on this machine (as shown in the ODBC Data Source Administrator). Ignored when a DSN is set."
+    },
+    {
+      "key": "informixserver",
+      "label": "Default Informix Server (INFORMIXSERVER)",
+      "type": "string",
+      "default": "",
+      "description": "The dbservername to connect to. Used when the connection's database field does not use the dbname@server form. Ignored when a DSN is set."
+    },
+    {
+      "key": "protocol",
+      "label": "Network Protocol",
+      "type": "select",
+      "options": ["onsoctcp", "onsocssl", "onipcshm", "olsoctcp"],
+      "default": "onsoctcp",
+      "description": "Informix network protocol. Use onsoctcp for standard TCP/IP."
+    },
+    {
+      "key": "dsn",
+      "label": "ODBC DSN (optional)",
+      "type": "string",
+      "default": "",
+      "description": "If set, connects through this pre-configured ODBC Data Source Name instead of building a DSN-less connection string. Host/server/protocol settings are then taken from the DSN."
+    },
+    {
+      "key": "db_locale",
+      "label": "DB_LOCALE (optional)",
+      "type": "string",
+      "default": "",
+      "description": "Database locale, e.g. en_US.819 or es_ES.utf8. Leave blank to use the driver default."
+    },
+    {
+      "key": "client_locale",
+      "label": "CLIENT_LOCALE (optional)",
+      "type": "string",
+      "default": "",
+      "description": "Client locale, e.g. en_US.819 or es_ES.utf8. Leave blank to use the driver default."
+    },
+    {
+      "key": "extra",
+      "label": "Extra Connection Attributes (optional)",
+      "type": "string",
+      "default": "",
+      "description": "Additional semicolon-separated ODBC attributes appended verbatim to the connection string."
+    }
+  ],
+  "data_types": [
+    { "name": "SMALLINT", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "INTEGER", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "INT8", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "BIGINT", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "SERIAL", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "SERIAL8", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "BIGSERIAL", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "DECIMAL", "category": "numeric", "requires_length": false, "requires_precision": true },
+    { "name": "MONEY", "category": "numeric", "requires_length": false, "requires_precision": true },
+    { "name": "FLOAT", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "SMALLFLOAT", "category": "numeric", "requires_length": false, "requires_precision": false },
+    { "name": "CHAR", "category": "string", "requires_length": true, "requires_precision": false, "default_length": "1" },
+    { "name": "VARCHAR", "category": "string", "requires_length": true, "requires_precision": false, "default_length": "255" },
+    { "name": "LVARCHAR", "category": "string", "requires_length": true, "requires_precision": false, "default_length": "2048" },
+    { "name": "NCHAR", "category": "string", "requires_length": true, "requires_precision": false, "default_length": "1" },
+    { "name": "NVARCHAR", "category": "string", "requires_length": true, "requires_precision": false, "default_length": "255" },
+    { "name": "TEXT", "category": "string", "requires_length": false, "requires_precision": false },
+    { "name": "DATE", "category": "date", "requires_length": false, "requires_precision": false },
+    { "name": "DATETIME YEAR TO SECOND", "category": "date", "requires_length": false, "requires_precision": false },
+    { "name": "DATETIME YEAR TO FRACTION(3)", "category": "date", "requires_length": false, "requires_precision": false },
+    { "name": "INTERVAL", "category": "date", "requires_length": false, "requires_precision": false },
+    { "name": "BYTE", "category": "binary", "requires_length": false, "requires_precision": false },
+    { "name": "BLOB", "category": "binary", "requires_length": false, "requires_precision": false },
+    { "name": "CLOB", "category": "binary", "requires_length": false, "requires_precision": false },
+    { "name": "BOOLEAN", "category": "other", "requires_length": false, "requires_precision": false }
+  ]
+}

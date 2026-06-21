@@ -1,0 +1,16 @@
+[package]
+name = "tabularis-informix-plugin"
+version = "0.1.0"
+edition = "2021"
+description = "Tabularis driver plugin for IBM Informix (11.70+) over ODBC"
+license = "Apache-2.0"
+publish = false
+
+[dependencies]
+serde_json = "1"
+odbc-api = "28"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = "symbols"

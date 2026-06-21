@@ -1,0 +1,4 @@
+/target
+
+# Per-machine build target pin (Informix ODBC driver bitness varies by host)
+/.cargo/config.toml

@@ -65,11 +65,7 @@ fn tabid_of(conn: &Connection, name: &str) -> Result<Option<i64>, PluginError> {
 fn colno_names(conn: &Connection, tabid: i64) -> Result<HashMap<i64, String>, PluginError> {
     let sql = format!("SELECT colno, TRIM(colname) FROM syscolumns WHERE tabid = {tabid}");
     let out = client::run_select(conn, &sql)?;
-    Ok(out
-        .rows
-        .iter()
-        .map(|r| (cint(r, 0), cstr(r, 1)))
-        .collect())
+    Ok(out.rows.iter().map(|r| (cint(r, 0), cstr(r, 1))).collect())
 }
 
 /// Column numbers participating in the primary key.
@@ -174,7 +170,11 @@ fn columns_of(conn: &Connection, name: &str) -> Result<Vec<Value>, PluginError> 
         let collength = cint(r, 2);
         let colno = cint(r, 3);
         let ext = cstr(r, 4);
-        let ext_opt = if ext.is_empty() { None } else { Some(ext.as_str()) };
+        let ext_opt = if ext.is_empty() {
+            None
+        } else {
+            Some(ext.as_str())
+        };
         let decoded = decode_type(coltype, collength, ext_opt);
 
         let mut col = json!({
@@ -317,9 +317,11 @@ pub fn get_databases(top: &Value) -> Result<Value, PluginError> {
         &conn,
         "SELECT TRIM(name) FROM sysmaster:sysdatabases ORDER BY name",
     ) {
-        Ok(out) if !out.rows.is_empty() => {
-            Ok(json!(out.rows.iter().map(|r| cstr(r, 0)).collect::<Vec<_>>()))
-        }
+        Ok(out) if !out.rows.is_empty() => Ok(json!(out
+            .rows
+            .iter()
+            .map(|r| cstr(r, 0))
+            .collect::<Vec<_>>())),
         _ => {
             // Fall back to the database from the connection parameters.
             let (db, _) = connection_params(top).database_and_server();

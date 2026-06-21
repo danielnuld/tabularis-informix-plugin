@@ -165,7 +165,9 @@ pub fn decode_default(type_code: &str, text: &str) -> Option<String> {
             }
             // Numeric literals are stored as "<class> <value>"; drop the class.
             match t.split_once(' ') {
-                Some((prefix, rest)) if prefix.parse::<i64>().is_ok() && !rest.trim().is_empty() => {
+                Some((prefix, rest))
+                    if prefix.parse::<i64>().is_ok() && !rest.trim().is_empty() =>
+                {
                     Some(rest.trim().to_string())
                 }
                 _ => Some(t.to_string()),

@@ -34,7 +34,9 @@ impl ConnectionParams {
             .and_then(Value::as_u64)
             .and_then(|p| u16::try_from(p).ok());
 
-        let database = obj.and_then(|o| o.get("database")).and_then(database_as_str);
+        let database = obj
+            .and_then(|o| o.get("database"))
+            .and_then(database_as_str);
 
         Self {
             host: get_str("host"),

@@ -43,8 +43,8 @@ pub fn paginate(query: &str, page: u64, page_size: u64) -> String {
     // Length of leading whitespace removed by trim_start.
     let lead = &q[..q.len() - trimmed.len()];
     let after_select = &trimmed[6..]; // everything past "SELECT"
-    // If the query already limits itself with SKIP/FIRST, leave it untouched to
-    // avoid producing an invalid double clause.
+                                      // If the query already limits itself with SKIP/FIRST, leave it untouched to
+                                      // avoid producing an invalid double clause.
     let next = after_select.trim_start().to_ascii_uppercase();
     if next.starts_with("SKIP ") || next.starts_with("FIRST ") {
         return q.to_string();
@@ -111,10 +111,7 @@ mod tests {
 
     #[test]
     fn non_select_unchanged() {
-        assert_eq!(
-            paginate("UPDATE t SET a = 1", 1, 10),
-            "UPDATE t SET a = 1"
-        );
+        assert_eq!(paginate("UPDATE t SET a = 1", 1, 10), "UPDATE t SET a = 1");
         assert!(!is_select("SELECTED FROM t"));
         assert!(is_select("  select * from t"));
     }

@@ -88,8 +88,5 @@ pub fn set(cfg: Config) {
 
 /// Returns a clone of the current global config.
 pub fn get() -> Config {
-    store()
-        .read()
-        .map(|g| g.clone())
-        .unwrap_or_default()
+    store().read().map(|g| g.clone()).unwrap_or_default()
 }

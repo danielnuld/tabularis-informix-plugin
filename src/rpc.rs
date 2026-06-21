@@ -53,9 +53,7 @@ pub fn handle_line(line: &str) -> Value {
 
         // Batch / ER diagram.
         "get_schema_snapshot" => respond(id, handlers::metadata::get_schema_snapshot(&params)),
-        "get_all_columns_batch" => {
-            respond(id, handlers::metadata::get_all_columns_batch(&params))
-        }
+        "get_all_columns_batch" => respond(id, handlers::metadata::get_all_columns_batch(&params)),
         "get_all_foreign_keys_batch" => {
             respond(id, handlers::metadata::get_all_foreign_keys_batch(&params))
         }

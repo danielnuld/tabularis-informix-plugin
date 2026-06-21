@@ -6,9 +6,7 @@
 //! emitted as JSON numbers while decimals stay strings to preserve precision.
 
 use odbc_api::buffers::TextRowSet;
-use odbc_api::{
-    environment, Connection, ConnectionOptions, Cursor, DataType, ResultSetMetadata,
-};
+use odbc_api::{environment, Connection, ConnectionOptions, Cursor, DataType, ResultSetMetadata};
 use serde_json::Value;
 
 use crate::config;
@@ -59,9 +57,9 @@ pub fn run_select(conn: &Connection, sql: &str) -> Result<QueryOutcome, PluginEr
     while let Some(batch) = block.fetch()? {
         for r in 0..batch.num_rows() {
             let mut row = Vec::with_capacity(ncols as usize);
-            for c in 0..ncols as usize {
+            for (c, &kind) in numeric.iter().enumerate() {
                 let cell = batch.at_as_str(c, r).ok().flatten();
-                row.push(cell_to_json(cell, numeric[c]));
+                row.push(cell_to_json(cell, kind));
             }
             rows.push(row);
         }

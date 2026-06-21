@@ -112,6 +112,7 @@ pub fn build_connection_string(
 }
 
 #[cfg(test)]
+#[allow(clippy::field_reassign_with_default)] // clearer than struct-init in these tests
 mod tests {
     use super::*;
 

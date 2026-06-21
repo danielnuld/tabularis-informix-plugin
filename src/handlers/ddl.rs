@@ -38,7 +38,10 @@ impl ColumnDef {
         Ok(Self {
             name,
             data_type,
-            is_nullable: v.get("is_nullable").and_then(Value::as_bool).unwrap_or(true),
+            is_nullable: v
+                .get("is_nullable")
+                .and_then(Value::as_bool)
+                .unwrap_or(true),
             is_pk: v.get("is_pk").and_then(Value::as_bool).unwrap_or(false),
             is_auto_increment: v
                 .get("is_auto_increment")
@@ -209,11 +212,18 @@ pub fn get_alter_column_sql(top: &Value) -> Result<Value, PluginError> {
 pub fn get_create_index_sql(top: &Value) -> Result<Value, PluginError> {
     let table = require_str(top, "table")?;
     let index = require_str(top, "index_name")?;
-    let unique = top.get("is_unique").and_then(Value::as_bool).unwrap_or(false);
+    let unique = top
+        .get("is_unique")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
     let columns: Vec<String> = top
         .get("columns")
         .and_then(Value::as_array)
-        .map(|a| a.iter().filter_map(|v| v.as_str().map(str::to_string)).collect())
+        .map(|a| {
+            a.iter()
+                .filter_map(|v| v.as_str().map(str::to_string))
+                .collect()
+        })
         .unwrap_or_default();
     Ok(json!([build_create_index(table, index, &columns, unique)]))
 }
@@ -310,17 +320,20 @@ mod tests {
         let new = col("quantity", "BIGINT");
         let stmts = build_alter_column("orders", &old, &new);
         assert_eq!(stmts.len(), 2);
+        assert_eq!(stmts[0], "RENAME COLUMN \"orders\".\"qty\" TO \"quantity\"");
         assert_eq!(
-            stmts[0],
-            "RENAME COLUMN \"orders\".\"qty\" TO \"quantity\""
+            stmts[1],
+            "ALTER TABLE \"orders\" MODIFY (\"quantity\" BIGINT)"
         );
-        assert_eq!(stmts[1], "ALTER TABLE \"orders\" MODIFY (\"quantity\" BIGINT)");
     }
 
     #[test]
     fn create_unique_index() {
         let sql = build_create_index("t", "idx_email", &["email".to_string()], true);
-        assert_eq!(sql, "CREATE UNIQUE INDEX \"idx_email\" ON \"t\" (\"email\")");
+        assert_eq!(
+            sql,
+            "CREATE UNIQUE INDEX \"idx_email\" ON \"t\" (\"email\")"
+        );
     }
 
     #[test]

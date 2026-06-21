@@ -99,7 +99,10 @@ pub fn delete_record(top: &Value) -> Result<Value, PluginError> {
     let pk_val = top.get("pk_val").cloned().unwrap_or(Value::Null);
 
     let where_clause = where_eq(&pk_col, &pk_val);
-    let sql = format!("DELETE FROM {} WHERE {where_clause}", quote_identifier(&table));
+    let sql = format!(
+        "DELETE FROM {} WHERE {where_clause}",
+        quote_identifier(&table)
+    );
 
     let conn = connect_from(top)?;
     guard_single_row(&conn, &table, &where_clause, "delete")?;

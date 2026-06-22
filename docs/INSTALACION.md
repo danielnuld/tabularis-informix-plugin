@@ -92,11 +92,27 @@ CSDK debe estar instalado en cada equipo.
 
 ## Alternativa: activar editando la config (sin UI)
 
-Con Tabularis **cerrado**, edita `%APPDATA%\tabularis\config.json` y agrega el id a
-la lista de drivers externos activos:
+Útil para automatizar la instalación en varios equipos o si el toggle da problemas.
 
-```json
-"activeExternalDrivers": ["informix"]
-```
+1. **Cierra Tabularis por completo.** ⚠️ Si queda abierto, al cerrarse sobrescribe
+   el archivo y pierde el cambio.
+2. Abre el archivo de configuración:
 
-Al abrir Tabularis, el plugin aparecerá activado en el selector de conexiones.
+   ```
+   %APPDATA%\tabularis\config.json
+   ```
+
+   > Ojo: el **config** está en `%APPDATA%\tabularis\` (sin `debba`); los
+   > **archivos del plugin** van en `%APPDATA%\debba\tabularis\data\plugins\`.
+   > Son carpetas distintas.
+3. Busca la clave `activeExternalDrivers` y agrega `"informix"`:
+
+   | Estado actual | Cómo debe quedar |
+   |---|---|
+   | `"activeExternalDrivers": null` | `"activeExternalDrivers": ["informix"]` |
+   | `"activeExternalDrivers": ["otro"]` | `"activeExternalDrivers": ["otro", "informix"]` |
+   | (la clave no existe) | agrégala: `"activeExternalDrivers": ["informix"],` |
+
+4. Guarda el archivo (verifica que siga siendo **JSON válido**: comas correctas,
+   sin coma colgante al final).
+5. Abre Tabularis. "IBM Informix" aparecerá en el selector de Nueva conexión.

@@ -116,3 +116,46 @@ CSDK debe estar instalado en cada equipo.
 4. Guarda el archivo (verifica que siga siendo **JSON válido**: comas correctas,
    sin coma colgante al final).
 5. Abre Tabularis. "IBM Informix" aparecerá en el selector de Nueva conexión.
+
+---
+
+## Solución de problemas
+
+### Error `IM002 — No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado`
+
+El administrador ODBC no encontró el driver de Informix para la arquitectura del
+plugin. Ejecuta este diagnóstico en **PowerShell** para ver los 3 datos clave:
+
+```powershell
+$p = "$env:APPDATA\debba\tabularis\data\plugins\informix\tabularis-informix-plugin.exe"
+"=== Driver Informix registrado en 64-bit ==="
+(Get-ItemProperty 'HKLM:\SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers' -EA SilentlyContinue).PSObject.Properties |
+  Where-Object { $_.Name -match 'informix' } | ForEach-Object { $_.Name }
+"=== Driver Informix registrado en 32-bit (WOW6432Node) ==="
+(Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\ODBC Drivers' -EA SilentlyContinue).PSObject.Properties |
+  Where-Object { $_.Name -match 'informix' } | ForEach-Object { $_.Name }
+"=== Bitness del plugin instalado ==="
+if (Test-Path $p) {
+  $fs=[IO.File]::OpenRead($p);$br=New-Object IO.BinaryReader($fs);$fs.Seek(0x3C,0)|Out-Null;$pe=$br.ReadInt32();$fs.Seek($pe+4,0)|Out-Null;$m=$br.ReadUInt16();$br.Close()
+  switch($m){0x14c{"plugin = 32-bit (usar win-x86)"}0x8664{"plugin = 64-bit (usar win-x64)"}default{("machine=0x{0:X}" -f $m)}}
+} else { "No se encontró el plugin en $p" }
+```
+
+Interpreta el resultado:
+
+| Resultado | Causa | Solución |
+|---|---|---|
+| No aparece "informix" en ningún hive | El CSDK no está instalado | Instalar el **IBM Informix Client SDK** |
+| Driver en **32-bit** y plugin **64-bit** | Bitness no coincide | Reemplazar por el binario **`win-x86`** |
+| Driver en **64-bit** y plugin **32-bit** | Bitness no coincide | Reemplazar por el binario **`win-x64`** |
+| El nombre del driver **no** es exactamente `IBM INFORMIX ODBC DRIVER` | El setting `driver_name` no coincide | En **Settings → Plugins → ⚙ IBM Informix**, pon el nombre **exacto** en `driver_name` |
+
+> Regla de oro: **el bitness del binario del plugin debe coincidir con el del
+> driver ODBC de Informix instalado**, no con el de Tabularis.
+
+### Error `-908 ... server (X) failed`
+El dbservername (la parte después de `@` en el Host) no coincide con el
+`DBSERVERNAME` real del servidor.
+
+### Error `-25580 System error in network function`
+No hay alcance de red a esa IP:puerto (puerto equivocado, firewall o VPN).

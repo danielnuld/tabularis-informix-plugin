@@ -45,8 +45,15 @@ CSDK debe estar instalado en cada equipo.
 
 1. Abre **Settings** (icono de engranaje ⚙️).
 2. Ve a la pestaña **Plugins**.
-3. Selecciona el filtro **Installed** (Instalados).
-4. Localiza la tarjeta **IBM Informix**.
+3. Haz clic en el filtro **"Instalados"** (arriba de la lista, entre "Todos" y
+   "Actualizaciones").
+
+   > ⚠️ **Importante:** la pestaña abre por defecto en **"Todos"**, que solo
+   > muestra plugins **descargables del registro oficial** — ahí **no** aparece
+   > Informix (aún no está publicado en el registro), por lo que **no verás
+   > ningún toggle**. El toggle está únicamente en **"Instalados"**.
+4. Localiza la tarjeta **IBM Informix** (los drivers integrados como MySQL muestran
+   una etiqueta "Built-in"; los externos como Informix muestran el toggle).
 5. Activa el **interruptor (toggle)** de la tarjeta. Cuando queda **azul/activado**,
    el driver se carga al instante (no hace falta reiniciar de nuevo).
 

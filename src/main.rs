@@ -3,6 +3,12 @@
 //! Speaks JSON-RPC 2.0 over stdin/stdout, one request per line, connecting to
 //! Informix through the IBM Informix ODBC driver (requires the Informix Client
 //! SDK to be installed on the host).
+//!
+//! Release builds use the Windows "windows" subsystem so that no console window
+//! is allocated when Tabularis (a GUI app) spawns the plugin. stdin/stdout are
+//! still wired through the pipes Tabularis sets up, so JSON-RPC is unaffected.
+//! Debug builds keep the console subsystem for easier CLI testing.
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::io::{self, BufRead, Write};
 

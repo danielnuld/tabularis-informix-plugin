@@ -11,9 +11,17 @@ El plugin se conecta a Informix a través del **driver ODBC del CSDK**, así que
 CSDK debe estar instalado en cada equipo.
 
 > ⚠️ **El bitness debe coincidir.** Un proceso solo puede cargar un driver ODBC de
-> su misma arquitectura. Revisa la arquitectura de tu driver Informix instalado:
-> - Driver de **32 bits** (típico, en `C:\Program Files (x86)\IBM Informix Client SDK`) → usa el binario **`win-x86`**.
-> - Driver de **64 bits** → usa el binario **`win-x64`**.
+> su misma arquitectura, así que **el binario del plugin debe coincidir con el
+> bitness del driver ODBC de Informix instalado** (no con el de Tabularis).
+>
+> ✅ **En esta organización el CSDK es de 32 bits, así que usa el binario
+> `win-x86` por defecto.** El `win-x64` es la excepción (solo para quien tenga el
+> Informix Client SDK de 64 bits).
+>
+> ¿No estás seguro? Abre el **"Administrador de origen de datos ODBC (32 bits)"**
+> (`C:\Windows\SysWOW64\odbcad32.exe`), pestaña **Controladores**, y busca
+> `IBM INFORMIX ODBC DRIVER`. Si aparece ahí → tu driver es de 32 bits → `win-x86`.
+> (O usa el diagnóstico de PowerShell de la sección *Solución de problemas*.)
 >
 > Tabularis es de 64 bits pero habla con el plugin por stdio, así que el bitness
 > del plugin es independiente del de la app.
@@ -22,10 +30,10 @@ CSDK debe estar instalado en cada equipo.
 
 ## 2. Instalar el plugin
 
-1. Descarga el ZIP que corresponda a tu bitness desde
+1. Descarga el ZIP de la última versión desde
    [Releases](https://github.com/danielnuld/tabularis-informix-plugin/releases):
-   - `tabularis-informix-plugin-win-x86-vX.Y.Z.zip` (driver de 32 bits)
-   - `tabularis-informix-plugin-win-x64-vX.Y.Z.zip` (driver de 64 bits)
+   - ⭐ **`tabularis-informix-plugin-win-x86-vX.Y.Z.zip`** (driver de 32 bits — **el predeterminado aquí**)
+   - `tabularis-informix-plugin-win-x64-vX.Y.Z.zip` (solo si tu driver Informix es de 64 bits)
 2. Crea la carpeta `informix` dentro del directorio de plugins de Tabularis y
    extrae ahí el contenido del ZIP (`manifest.json` + el `.exe`):
 

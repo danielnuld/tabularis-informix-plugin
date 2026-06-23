@@ -28,6 +28,15 @@ jobs:
           - platform-label: linux-x64
             runner: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+          - platform-label: linux-arm64
+            runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+          - platform-label: darwin-x64
+            runner: macos-13
+            target: x86_64-apple-darwin
+          - platform-label: darwin-arm64
+            runner: macos-14
+            target: aarch64-apple-darwin
 
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +49,15 @@ jobs:
       - name: Install unixODBC (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y unixodbc-dev
+
+      - name: Install unixODBC (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install unixodbc
+          prefix="$(brew --prefix unixodbc)"
+          echo "LIBRARY_PATH=$prefix/lib:$LIBRARY_PATH" >> "$GITHUB_ENV"
+          echo "CPATH=$prefix/include:$CPATH" >> "$GITHUB_ENV"
+          echo "RUSTFLAGS=-L $prefix/lib" >> "$GITHUB_ENV"
 
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
@@ -56,8 +74,8 @@ jobs:
           Compress-Archive -Path "$stage\*" -DestinationPath $zip
           "ASSET=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
-      - name: Package (Linux)
-        if: runner.os == 'Linux'
+      - name: Package (Unix)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           stage=staging

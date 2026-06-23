@@ -70,6 +70,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
           Copy-Item "target\${{ matrix.target }}\release\$env:BIN_NAME.exe" $stage
           Copy-Item "manifest.json" $stage
+          Copy-Item ".tabularium" $stage
           $zip = "$env:BIN_NAME-${{ matrix.platform-label }}-${{ github.ref_name }}.zip"
           Compress-Archive -Path "$stage\*" -DestinationPath $zip
           "ASSET=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
@@ -82,6 +83,7 @@ jobs:
           mkdir -p "$stage"
           cp "target/${{ matrix.target }}/release/$BIN_NAME" "$stage/"
           cp manifest.json "$stage/"
+          cp .tabularium "$stage/"
           zip="$BIN_NAME-${{ matrix.platform-label }}-${{ github.ref_name }}.zip"
           (cd "$stage" && zip -r "../$zip" .)
           echo "ASSET=$zip" >> "$GITHUB_ENV"

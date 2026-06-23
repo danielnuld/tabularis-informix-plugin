@@ -11,7 +11,11 @@ ODBC driver**.
   It provides the ODBC driver (`IBM INFORMIX ODBC DRIVER`, `iclit09b.dll`) and
   the network libraries. Without it the plugin loads but every connection fails
   with ODBC error `IM002` (data source / driver not found).
-- A Rust toolchain (`stable`, MSVC on Windows) to build from source.
+- **On Linux:** additionally install the **unixODBC** driver manager
+  (`unixodbc` / `unixodbc-dev` on Debian/Ubuntu) and register the Informix ODBC
+  driver for Linux in `odbcinst.ini`. The driver manager is what loads the
+  Informix driver at runtime.
+- A Rust toolchain (`stable`; MSVC on Windows) to build from source.
 
 ### ⚠️ Bitness must match the Informix ODBC driver
 
@@ -20,8 +24,9 @@ ODBC driver shipped in `C:\Program Files (x86)\IBM Informix Client SDK` is
 **32-bit**, so the plugin must be built 32-bit too. Tabularis (64-bit) talks to
 the plugin over stdio, so the plugin's bitness is independent of the host.
 
-This repo pins the 32-bit target in `.cargo/config.toml`. A 64-bit build against
-a 32-bit driver fails with `IM002` even though the driver is installed.
+A 64-bit build against a 32-bit driver fails with `IM002` even though the driver
+is installed. The official releases ship both `win-x86` (32-bit) and `win-x64`
+(64-bit); pick the one matching your driver. (Linux releases ship `linux-x64`.)
 
 To check your driver's bitness: it is registered under
 `HKLM\SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI` (32-bit) vs

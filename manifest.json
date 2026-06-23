@@ -2,7 +2,7 @@
   "$schema": "https://tabularis.dev/schemas/plugin-manifest.json",
   "id": "informix",
   "name": "IBM Informix",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "IBM Informix (11.70+) driver over ODBC. Requires the Informix Client SDK (CSDK) installed on the host.",
   "default_port": 9088,
   "default_username": "informix",

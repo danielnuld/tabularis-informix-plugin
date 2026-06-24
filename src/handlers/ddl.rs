@@ -168,6 +168,14 @@ fn build_create_foreign_key(
     sql
 }
 
+fn build_create_view(view: &str, definition: &str) -> String {
+    format!("CREATE VIEW {} AS {}", quote_identifier(view), definition)
+}
+
+fn build_drop_view(view: &str) -> String {
+    format!("DROP VIEW IF EXISTS {}", quote_identifier(view))
+}
+
 // ---------------------------------------------------------------------------
 // RPC handlers
 // ---------------------------------------------------------------------------
@@ -238,6 +246,32 @@ pub fn get_create_foreign_key_sql(top: &Value) -> Result<Value, PluginError> {
     Ok(json!([build_create_foreign_key(
         table, fk_name, column, ref_table, ref_column, on_delete
     )]))
+}
+
+pub fn create_view(top: &Value) -> Result<Value, PluginError> {
+    let view = require_str(top, "view_name")?.to_string();
+    let definition = require_str(top, "definition")?.to_string();
+    let conn = connect_from(top)?;
+    client::run_exec(&conn, &build_create_view(&view, &definition))?;
+    Ok(Value::Null)
+}
+
+pub fn alter_view(top: &Value) -> Result<Value, PluginError> {
+    let view = require_str(top, "view_name")?.to_string();
+    let definition = require_str(top, "definition")?.to_string();
+    let conn = connect_from(top)?;
+    // Informix has no ALTER VIEW or CREATE OR REPLACE VIEW, so the only way to
+    // change a definition is to drop the view and recreate it.
+    client::run_exec(&conn, &build_drop_view(&view))?;
+    client::run_exec(&conn, &build_create_view(&view, &definition))?;
+    Ok(Value::Null)
+}
+
+pub fn drop_view(top: &Value) -> Result<Value, PluginError> {
+    let view = require_str(top, "view_name")?.to_string();
+    let conn = connect_from(top)?;
+    client::run_exec(&conn, &build_drop_view(&view))?;
+    Ok(Value::Null)
 }
 
 pub fn drop_index(top: &Value) -> Result<Value, PluginError> {
@@ -358,5 +392,19 @@ mod tests {
         let sql = build_create_foreign_key("o", "fk", "c_id", "c", "id", None);
         assert!(!sql.contains("ON DELETE"), "{sql}");
         assert!(sql.ends_with("CONSTRAINT \"fk\""), "{sql}");
+    }
+
+    #[test]
+    fn create_view_quotes_name_and_keeps_definition() {
+        let sql = build_create_view("active_orders", "SELECT * FROM orders WHERE status = 'open'");
+        assert_eq!(
+            sql,
+            "CREATE VIEW \"active_orders\" AS SELECT * FROM orders WHERE status = 'open'"
+        );
+    }
+
+    #[test]
+    fn drop_view_uses_if_exists() {
+        assert_eq!(build_drop_view("active_orders"), "DROP VIEW IF EXISTS \"active_orders\"");
     }
 }

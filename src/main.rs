@@ -14,6 +14,7 @@ use std::io::{self, BufRead, Write};
 
 mod client;
 mod config;
+mod dllpath;
 mod error;
 mod handlers;
 mod models;

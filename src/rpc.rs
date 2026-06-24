@@ -76,6 +76,9 @@ pub fn handle_line(line: &str) -> Value {
         }
 
         // DDL mutation.
+        "create_view" => respond(id, handlers::ddl::create_view(&params)),
+        "alter_view" => respond(id, handlers::ddl::alter_view(&params)),
+        "drop_view" => respond(id, handlers::ddl::drop_view(&params)),
         "drop_index" => respond(id, handlers::ddl::drop_index(&params)),
         "drop_foreign_key" => respond(id, handlers::ddl::drop_foreign_key(&params)),
 

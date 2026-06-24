@@ -28,6 +28,9 @@ pub struct QueryOutcome {
 /// Opens a new Informix connection from the given parameters.
 pub fn connect(params: &ConnectionParams) -> Result<Connection<'static>, PluginError> {
     let cfg = config::get();
+    // Make the Informix CSDK bin discoverable so the driver's dependent DLLs
+    // load even when the CSDK bin is not on the system PATH (Windows).
+    crate::dllpath::ensure(&cfg.driver_name);
     let conn_str = build_connection_string(params, &cfg)?;
     let env = environment().map_err(|e| PluginError::internal(format!("ODBC env: {e}")))?;
     env.connect_with_connection_string(&conn_str, ConnectionOptions::default())

@@ -161,6 +161,33 @@ Interpreta el resultado:
 > Regla de oro: **el bitness del binario del plugin debe coincidir con el del
 > driver ODBC de Informix instalado**, no con el de Tabularis.
 
+### Error `IM003 — No se puede cargar el controlador ... error del sistema 126`
+
+(`No se puede encontrar el módulo especificado`, citando `iclit09b.dll`.)
+
+Windows **sí encontró** el driver, pero **no puede cargarlo** porque le falta una
+**DLL de la que depende**. `iclit09b.dll` depende de:
+- otras DLLs del CSDK (`iregt07b.dll`, `igl4n304.dll`, `irclt09b.dll`) — están en
+  el `bin` del CSDK; se resuelven si ese `bin` está accesible para el proceso;
+- **`MSVCR90.dll`** — el runtime de **Visual C++ 2008 (x86)**, que vive en el
+  sistema (no en el `bin` del CSDK).
+
+A partir de la **v0.1.4**, el plugin agrega automáticamente el `bin` del CSDK a
+su ruta de búsqueda de DLLs (resolviéndolo del registro ODBC / `INFORMIXDIR`),
+así que las DLLs del CSDK ya **no** dependen del PATH. Si aun así aparece este
+error, falta `MSVCR90.dll`:
+
+1. **Instalar "Microsoft Visual C++ 2008 Redistributable (x86)"** (provee
+   `MSVCR90.dll`). La versión **x86**, aunque Windows sea de 64 bits.
+2. (Si usas una versión del plugin anterior a v0.1.4) agregar
+   `C:\Program Files (x86)\IBM Informix Client SDK\bin` al **PATH** del sistema y
+   **reiniciar** la máquina.
+
+Verificación:
+```powershell
+Test-Path "C:\Windows\SysWOW64\msvcr90.dll"   # True = VC++ 2008 x86 presente
+```
+
 ### Error `-908 ... server (X) failed`
 El dbservername (la parte después de `@` en el Host) no coincide con el
 `DBSERVERNAME` real del servidor.
